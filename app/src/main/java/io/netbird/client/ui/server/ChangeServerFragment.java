@@ -226,7 +226,7 @@ public class ChangeServerFragment extends Fragment {
 
     private void showConfirmChangeServerDialog() {
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm_change_server, null);
-        final AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
+        final AlertDialog alertDialog = new AlertDialog.Builder(requireContext(), R.style.AlertDialogTheme)
                 .setView(dialogView)
                 .create();
 
@@ -243,7 +243,7 @@ public class ChangeServerFragment extends Fragment {
     private void showSuccessDialog(Context context) {
         requireActivity().runOnUiThread(() -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_change_server_success, null);
-            final AlertDialog alertDialog = new AlertDialog.Builder(context)
+            final AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme)
                     .setView(dialogView)
                     .create();
 
