@@ -18,6 +18,7 @@ public class NetbirdTileService extends TileService {
     private static final String TAG = "NetbirdTileService";
     private VPNService.MyLocalBinder mBinder;
     private boolean isBound = false;
+    private boolean isBinding = false;
     private boolean pendingClick = false;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -25,6 +26,7 @@ public class NetbirdTileService extends TileService {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             mBinder = (VPNService.MyLocalBinder) binder;
             isBound = true;
+            isBinding = false;
             mBinder.addServiceStateListener(serviceStateListener);
             updateTile();
 
@@ -38,6 +40,7 @@ public class NetbirdTileService extends TileService {
         public void onServiceDisconnected(ComponentName name) {
             mBinder = null;
             isBound = false;
+            isBinding = false;
             updateTile();
         }
     };
@@ -103,16 +106,21 @@ public class NetbirdTileService extends TileService {
 
     private void bindToVpnService() {
         Intent intent = new Intent(this, VPNService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        isBinding = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void unbindFromVpnService() {
-        if (isBound) {
+        if (isBound || isBinding) {
             if (mBinder != null) {
                 mBinder.removeServiceStateListener(serviceStateListener);
             }
-            unbindService(serviceConnection);
+            try {
+                unbindService(serviceConnection);
+            } catch (IllegalArgumentException e) {
+                Log.w(TAG, "Service not bound", e);
+            }
             isBound = false;
+            isBinding = false;
             mBinder = null;
         }
     }
