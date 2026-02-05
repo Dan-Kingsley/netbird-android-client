@@ -196,6 +196,10 @@ public class VPNService extends android.net.VpnService {
             engineRunner.stop();
         }
 
+        public boolean isRunning() {
+            return engineRunner.isRunning();
+        }
+
         public PeerInfoArray peersInfo() {
             return engineRunner.peersInfo();
         }
