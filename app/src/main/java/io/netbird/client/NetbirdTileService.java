@@ -1,5 +1,6 @@
 package io.netbird.client;
 
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -83,8 +84,12 @@ public class NetbirdTileService extends TileService {
 
         if (VpnService.prepare(this) != null) {
             Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityAndCollapse(intent);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    this, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            startActivityAndCollapse(pendingIntent);
             return;
         }
 
@@ -98,9 +103,11 @@ public class NetbirdTileService extends TileService {
             } else {
                 mBinder.runEngine(null, false);
             }
-        } else {
+        } else if (!isBinding) {
             pendingClick = true;
             startAndRunVpnService();
+        } else {
+            pendingClick = true;
         }
     }
 
