@@ -107,6 +107,10 @@ public class NetbirdTileService extends TileService {
     private void bindToVpnService() {
         Intent intent = new Intent(this, VPNService.class);
         isBinding = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        if (!isBinding) {
+            pendingClick = false;
+            Log.w(TAG, "bindService failed");
+        }
     }
 
     private void unbindFromVpnService() {
@@ -123,6 +127,7 @@ public class NetbirdTileService extends TileService {
             isBinding = false;
             mBinder = null;
         }
+        pendingClick = false;
     }
 
     private void startAndRunVpnService() {
